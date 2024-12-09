@@ -49,7 +49,7 @@ public final class TelegramIntegration extends JavaPlugin {
         String timestamp = LocalDateTime.now(ZoneId.of("Europe/Moscow"))
                 .format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
 
-        String formattedMessage = "[" + timestamp + "] " + message;
+        String formattedMessage = "[" + timestamp + "] " + message.replaceAll("([&§])[0-9a-fk-or]", "");
 
         if (messageThreadId == null) {
             messageQueues.computeIfAbsent(chatId, k -> new ConcurrentHashMap<>())
