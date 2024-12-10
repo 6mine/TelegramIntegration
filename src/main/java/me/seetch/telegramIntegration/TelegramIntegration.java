@@ -31,6 +31,7 @@ public final class TelegramIntegration extends JavaPlugin {
         if (bot != null) {
             bot.removeGetUpdatesListener();
         }
+        sendRemainingMessages();
     }
 
     public void addMessage(String logType, String chatId, Integer messageThreadId, String message) {
@@ -71,5 +72,19 @@ public final class TelegramIntegration extends JavaPlugin {
             request.messageThreadId(messageThreadId);
         }
         bot.execute(request);
+    }
+
+    private void sendRemainingMessages() {
+        for (Map.Entry<String, Map<String, Map<Integer, Queue<String>>>> logTypeEntry : messageQueues.entrySet()) {
+            String logType = logTypeEntry.getKey();
+            for (Map.Entry<String, Map<Integer, Queue<String>>> chatIdEntry : logTypeEntry.getValue().entrySet()) {
+                String chatId = chatIdEntry.getKey();
+                for (Map.Entry<Integer, Queue<String>> messageThreadIdEntry : chatIdEntry.getValue().entrySet()) {
+                    int messageThreadId = messageThreadIdEntry.getKey();
+                    Queue<String> queue = messageThreadIdEntry.getValue();
+                    sendMessages(logType, chatId, messageThreadId, queue);
+                }
+            }
+        }
     }
 }
