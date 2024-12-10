@@ -47,7 +47,7 @@ public final class TelegramIntegration extends JavaPlugin {
 
         queue.add(formattedMessage);
 
-        if (queue.size() >= 10) {
+        if (queue.size() >= getConfig().getInt("max-queue-length")) {
             sendMessages(logType, chatId, messageThreadId != null ? messageThreadId : 0, queue);
         }
     }
