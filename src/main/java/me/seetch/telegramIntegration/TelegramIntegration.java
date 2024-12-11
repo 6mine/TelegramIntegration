@@ -52,11 +52,20 @@ public final class TelegramIntegration extends JavaPlugin {
         }
     }
 
+    public void sendMessageImmediately(String logType, String chatId, Integer messageThreadId, String message) {
+        String timestamp = LocalDateTime.now(ZoneId.of("Europe/Moscow"))
+                .format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
+
+        String formattedMessage = "[" + timestamp + "] " + message.replaceAll("([&§])[0-9a-fk-or]", "");
+
+        sendMessage(logType, chatId, messageThreadId != null ? messageThreadId : 0, formattedMessage);
+    }
+
     private void sendMessages(String logType, String chatId, int messageThreadId, Queue<String> queue) {
         StringBuilder messageBuilder = new StringBuilder();
         int count = 0;
 
-        while (!queue.isEmpty() && count < 10) {
+        while (!queue.isEmpty() && count < getConfig().getInt("max-queue-length")) {
             messageBuilder.append(queue.poll()).append("\n");
             count++;
         }
